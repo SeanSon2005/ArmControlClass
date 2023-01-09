@@ -1,4 +1,3 @@
-import java.util.*;
 public class ArmControl{
     private double origin_height; //all measurement in inches?
     private double limb1_length;
