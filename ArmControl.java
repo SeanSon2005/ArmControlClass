@@ -29,13 +29,14 @@ public class ArmControl{
     //calculate arm angles relevative to limb that it's attatched to
     public void calcAngles(double x, double y, double z){
         double relative_y = y-origin_height;                          // calc distance in 3d from top pivot point
+        double adjusted_x = Math.abs(x);
         double dist3d = distance(0,x,0,relative_y,0,z);
         if(dist3d > limb1_length + limb2_length){                       //checks if arm coordinate is possible
             return;
         }
-        double dist2d = distance(0,x,0,relative_y);                                         // calc distance in 2d from top pivot point
-        a2 = lawofcosines(limb1_length, limb2_length, dist2d);                                      // a2 is angle between 1st arm segment to 2nd arm segment
-        a1 = angleBetweenLines(0, -1, x, relative_y) - lawofsines(a2, dist2d, limb2_length);    // a1 is angle between verticle to 1st arm segment
+        double dist2d = distance(0,adjusted_x,0,relative_y);                                         // calc distance in 2d from top pivot point
+        a2 = lawofcosines(limb1_length, limb2_length, dist2d);                                              // a2 is angle between 1st arm segment to 2nd arm segment
+        a1 = angleBetweenLines(0, -1, adjusted_x, relative_y) - lawofsines(a2, dist2d, limb2_length);   // a1 is angle between verticle to 1st arm segment
 
         //ill optimze later cuz lol
         if (x == 0){
