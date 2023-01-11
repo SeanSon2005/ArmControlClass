@@ -22,25 +22,33 @@ public class ArmControl{
     public double lawofsines(double angle, double a, double b){ //law of sines calc
         return Math.toDegrees(Math.asin((b * Math.sin(Math.toRadians(angle))) / a));
     }
-    public double angleBetweenLines(double x1, double y1, double x2, double y2){ //angle between lines
-        double dotproduct = x1 * x2 + y1 * y2;
-        return Math.toDegrees(Math.acos(dotproduct/(Math.abs(distance(0,x1,0,y1)*distance(0, x2, 0, y2)))));
+    public double angleBetweenLines(double x1, double y1, double z1, double x2, double y2, double z2){ //angle between lines
+        double dotproduct = x1 * x2 + y1 * y2 + z1 * z2;
+        return Math.toDegrees(Math.acos(dotproduct/(Math.abs(distance(0,x1,0,y1,0,z1)*distance(0, x2, 0, y2,0,z2)))));
     }
     //calculate arm angles relevative to limb that it's attatched to
     public void calcAngles(double x, double y, double z){
         double relative_y = y-origin_height;                          // calc distance in 3d from top pivot point
         double adjusted_x = Math.abs(x);
-        double dist3d = distance(0,x,0,relative_y,0,z);
-        if(dist3d > limb1_length + limb2_length){                       //checks if arm coordinate is possible
+        double dist3d = distance(0,adjusted_x,0,relative_y,0,z);
+        if(dist3d > limb1_length + limb2_length){                      //checks if arm coordinate is possible
             return;
         }
-        double dist2d = distance(0,adjusted_x,0,relative_y);                                         // calc distance in 2d from top pivot point
-        a2 = lawofcosines(limb1_length, limb2_length, dist2d);                                              // a2 is angle between 1st arm segment to 2nd arm segment
-        a1 = angleBetweenLines(0, -1, adjusted_x, relative_y) - lawofsines(a2, dist2d, limb2_length);   // a1 is angle between verticle to 1st arm segment
-
-        //ill optimze later cuz lol
+        if (dist3d == 0){       //zero, zero on coordinate -> prevent arithmethic exception
+            a2 = 0;
+            a1 = 0;
+            turretAngle = 0;
+            return;
+        }           
+        a2 = lawofcosines(limb1_length, limb2_length, dist3d);                                              // a2 is angle between 1st arm segment to 2nd arm segment
+        a1 = angleBetweenLines(0, -1, 0, adjusted_x, relative_y, z) - lawofsines(a2, dist3d, limb2_length);   // a1 is angle between verticle to 1st arm segment
+       
+        //turret angle calculations
         if (x == 0){
-            if(z > 0){
+            if(z == 0){
+                turretAngle = 0;
+            }
+            else if(z > 0){
                 turretAngle = 90;
             }
             else{
@@ -62,6 +70,9 @@ public class ArmControl{
             else{
                 turretAngle = 180 + Math.toDegrees(Math.atan(Math.abs(z/x)));
             }
+        }
+        if(turretAngle == 360){
+            turretAngle = 0;
         }
     }
     public double getTurretAngle(){
