@@ -28,13 +28,13 @@ public class ArmControl{
     }
     //calculate arm angles relevative to limb that it's attatched to
     public void calcAngles(double x, double y, double z){
-        double relative_y = y-origin_height;                          // calc distance in 3d from top pivot point
+        double relative_y = y-origin_height;   // calculate height relative to the origin (at the tip of the non-moving rod which holds the arm)
         double adjusted_x = Math.abs(x);
-        double dist3d = distance(0,adjusted_x,0,relative_y,0,z);
+        double dist3d = distance(0,adjusted_x,0,relative_y,0,z);     // calc distance in 3d from top pivot point
         if(dist3d > limb1_length + limb2_length){                      //checks if arm coordinate is possible
             return;
         }
-        if (dist3d == 0){       //zero, zero on coordinate -> prevent arithmethic exception
+        if (dist3d == 0){       //zero, zero on coordinate -> prevent divide by 0 exception
             a2 = 0;
             a1 = 0;
             turretAngle = 0;
@@ -44,7 +44,7 @@ public class ArmControl{
         a1 = angleBetweenLines(0, -1, 0, adjusted_x, relative_y, z) - lawofsines(a2, dist3d, limb2_length);   // a1 is angle between verticle to 1st arm segment
        
         //turret angle calculations
-        if (x == 0){
+        if (x == 0){            //prevent divide by 0
             if(z == 0){
                 turretAngle = 0;
             }
@@ -75,7 +75,7 @@ public class ArmControl{
             turretAngle = 0;
         }
     }
-    public double getTurretAngle(){
+    public double getTurretAngle(){ //get angle calculations
         return turretAngle;
     }
     public double getFirstAngle(){
